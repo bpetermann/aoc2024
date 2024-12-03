@@ -24,7 +24,7 @@
         "solved": true,
         "result": "371",
         "attempts": [],
-        "time": 1.482413
+        "time": 1.474349
       },
       "part2": {
         "solved": true,
@@ -32,21 +32,21 @@
         "attempts": [
           "423"
         ],
-        "time": 2.049636
+        "time": 1.974101
       }
     },
     {
       "part1": {
-        "solved": false,
-        "result": null,
+        "solved": true,
+        "result": "161085926",
         "attempts": [],
-        "time": null
+        "time": 1.695124
       },
       "part2": {
-        "solved": false,
-        "result": null,
+        "solved": true,
+        "result": "82045421",
         "attempts": [],
-        "time": null
+        "time": 1.528035
       }
     },
     {

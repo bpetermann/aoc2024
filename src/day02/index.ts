@@ -14,8 +14,7 @@ const isUnsafe = (decrease: boolean, current: number, prev: number): boolean =>
 
 const findUnsafeIndex = (report: string[]): number =>
   report.findIndex(
-    (level, i, self) =>
-      !!i && isUnsafe(+report[0] > +report[1], +level, +self[i - 1]),
+    (level, i, s) => !!i && isUnsafe(+s[0] > +s[1], +level, +s[i - 1]),
   );
 
 const isSafe = (report: string[]): boolean => findUnsafeIndex(report) < 0;
