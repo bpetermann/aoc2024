@@ -92,7 +92,7 @@ const directionArray = (x: number, y: number, input: string[][]) => [
   [input[x - 1][y + 1], input[x][y], input[x + 1][y - 1]].join(""),
 ];
 
-const checkDiagonalMas = (x: number, y: number, input: string[][]) =>
+const checkXmas = (x: number, y: number, input: string[][]) =>
   isWithinBorders(x, y, input) &&
   directionArray(x, y, input).filter((value) => value === MAS).length === 2
     ? 1
@@ -123,9 +123,7 @@ const part2 = (rawInput: string) => {
 
   input.forEach((line, index) =>
     line.forEach((value, i) => {
-      if (value === "A") {
-        result += checkDiagonalMas(index, i, input);
-      }
+      if (value === "A") result += checkXmas(index, i, input);
     }),
   );
 
