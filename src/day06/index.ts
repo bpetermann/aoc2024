@@ -7,47 +7,20 @@ enum Direction {
   West,
 }
 
-type Position = [number, number];
-
-type Guard = {
-  position: Position;
-  direction: Direction;
-  path: Position[];
-};
-
 const parseInput = (rawInput: string) =>
-  rawInput.split("\n").map((item) => item.split(""));
+  rawInput.split("\n").map((row) => row.split(""));
 
 const getStartPosition = (input: string[][]) => {
-  const start: Position = [0, 0];
-
-  input.forEach((line, i) => {
-    const startPosition = line.findIndex((field) => field === "^");
-
-    if (startPosition > 0) {
-      start[0] = i;
-      start[1] = startPosition;
+  for (let i = 0; i < input.length; i++) {
+    for (let j = 0; j < input[0].length; j++) {
+      if (input[i][j] === "^") return [i, j];
     }
-  });
+  }
 
-  return start;
+  throw new Error("Starting position not found");
 };
 
-const getGuard = (input: string[][]) => {
-  const startPosition = getStartPosition(input);
-
-  return {
-    position: startPosition,
-    direction: Direction.North,
-    path: [startPosition],
-  };
-};
-
-const isOutsideMap = (input: string[][], [x, y]: Position) => {
-  return x > input.length - 1 || x < 0 || y > input[0].length - 1 || y < 0;
-};
-
-const newPostion = ({ direction, position }: Guard): Position => {
+const newPostion = (direction: Direction, position: number[]): number[] => {
   const [x, y] = position;
   switch (direction) {
     case Direction.North:
@@ -61,53 +34,77 @@ const newPostion = ({ direction, position }: Guard): Position => {
   }
 };
 
-const newDirection = (direction: Direction): Direction =>
-  direction === 3 ? 0 : direction + 1;
+const walk = (input: string[][]) => {
+  const path = new Set<string>();
+  let direction = Direction.North;
+  let position = getStartPosition(input);
 
-const isDistinct = (path: Position[], position: Position) =>
-  path.findIndex(([x, y]) => x === position[0] && y === position[1]) !== -1;
+  while (true) {
+    path.add(`${position}`);
 
-const nextStep = (input: string[][], guard: Guard) => {
-  const [x, y] = newPostion(guard);
-  return input[x][y];
-};
+    const [x, y] = newPostion(direction, position);
 
-const uniqueSteps = (path: Position[]) =>
-  path.filter((position, i, self) => !isDistinct(self.slice(0, i), position))
-    .length;
+    if (x >= input.length || x < 0 || y >= input[0].length || y < 0) break;
 
-const walk = (guard: Guard, input: string[][]) => {
-  if (isOutsideMap(input, newPostion(guard))) return guard;
-
-  while (
-    !isOutsideMap(input, newPostion(guard)) &&
-    nextStep(input, guard) !== "#"
-  ) {
-    guard.position = newPostion(guard);
-    guard.path.push(guard.position);
+    if (input[x][y] === "#") {
+      direction = (direction + 1) % 4;
+    } else {
+      position = [x, y];
+    }
   }
 
-  if (isOutsideMap(input, newPostion(guard))) return guard;
+  return path;
+};
 
-  guard.direction = newDirection(guard.direction);
+const isLoop = (input: string[][], start: number[]) => {
+  const path = new Set();
+  let direction = Direction.North;
+  let position = start;
 
-  walk(guard, input);
+  while (true) {
+    const step = `${position[0]},${position[1]},${direction}`;
 
-  return guard;
+    if (path.has(step)) return true;
+
+    path.add(step);
+
+    const [x, y] = newPostion(direction, position);
+
+    if (x >= input.length || x < 0 || y >= input[0].length || y < 0)
+      return false;
+
+    if (input[x][y] === "#") {
+      direction = (direction + 1) % 4;
+    } else {
+      position = [x, y];
+    }
+  }
 };
 
 const part1 = (rawInput: string) => {
   const input = parseInput(rawInput);
-  const guard = getGuard(input);
-  const { path } = walk(guard, input);
-
-  return uniqueSteps(path);
+  const path = walk(input);
+  return path.size;
 };
 
 const part2 = (rawInput: string) => {
   const input = parseInput(rawInput);
+  const path = walk(input);
+  const steps = [...path].map((step) => step.split(",").map(Number));
 
-  return;
+  let start = getStartPosition(input);
+
+  let count = 0;
+
+  steps.forEach(([x, y]) => {
+    input[x][y] = "#";
+
+    if (isLoop(input, start)) count++;
+
+    input[x][y] = ".";
+  });
+
+  return count;
 };
 
 run({
