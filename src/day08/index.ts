@@ -3,7 +3,7 @@ import run from "aocrunner";
 const parseInput = (rawInput: string) =>
   rawInput.split("\n").map((row) => row.split(""));
 
-const getSymbols = (
+const getFrequencies = (
   input: string[][],
   x: number,
   y: number,
@@ -30,9 +30,9 @@ const part1 = (rawInput: string) => {
   for (let i = 0; i < input.length; i++) {
     for (let j = 0; j < input[0].length; j++) {
       if (input[i][j] !== ".") {
-        const possibleNodes = getSymbols(input, i, j, input[i][j]);
+        const frequencies = getFrequencies(input, i, j, input[i][j]);
 
-        possibleNodes.forEach(([x, y]) => {
+        frequencies.forEach(([x, y]) => {
           let nextX = 2 * i - x;
           let nextY = 2 * j - y;
 
@@ -60,9 +60,9 @@ const part2 = (rawInput: string) => {
   for (let i = 0; i < input.length; i++) {
     for (let j = 0; j < input[0].length; j++) {
       if (input[i][j] !== ".") {
-        const possibleNodes = getSymbols(input, i, j, input[i][j]);
+        const frequencies = getFrequencies(input, i, j, input[i][j]);
 
-        possibleNodes.forEach(([x, y]) => {
+        frequencies.forEach(([x, y]) => {
           let currentX = i;
           let currentY = j;
 
