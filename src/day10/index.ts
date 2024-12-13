@@ -3,11 +3,9 @@ import run from "aocrunner";
 const parseInput = (rawInput: string) =>
   rawInput.split("\n").map((row) => row.split("").map(Number));
 
-const part1 = (rawInput: string) => {
-  const input = parseInput(rawInput);
+type Position = [number, number];
 
-  type Position = [number, number];
-
+const getStartPositions = (input: number[][]) => {
   let startPositions: Position[] = [];
 
   for (let i = 0; i < input.length; i++) {
@@ -16,49 +14,75 @@ const part1 = (rawInput: string) => {
     }
   }
 
-  const findNext = ([x, y]: Position): Position[] => {
-    const nextPos = input[x][y] + 1;
+  return startPositions;
+};
 
-    let next: Position[] = [];
+const findNext = ([x, y]: Position, input: number[][]): Position[] => {
+  const nextPos = input[x][y] + 1;
+  const next: Position[] = [];
 
-    if (input[x + 1]?.[y] === nextPos) next.push([x + 1, y]);
-    if (input[x - 1]?.[y] === nextPos) next.push([x - 1, y]);
-    if (input[x]?.[y + 1] === nextPos) next.push([x, y + 1]);
-    if (input[x]?.[y - 1] === nextPos) next.push([x, y - 1]);
+  if (input[x + 1]?.[y] === nextPos) next.push([x + 1, y]);
+  if (input[x - 1]?.[y] === nextPos) next.push([x - 1, y]);
+  if (input[x]?.[y + 1] === nextPos) next.push([x, y + 1]);
+  if (input[x]?.[y - 1] === nextPos) next.push([x, y - 1]);
 
-    return next;
-  };
+  return next;
+};
+
+const part1 = (rawInput: string) => {
+  const input = parseInput(rawInput);
 
   let result = 0;
 
-  startPositions.forEach((pos) => {
-    let queue = [pos];
+  getStartPositions(input).forEach((pos) => {
+    let path = [pos];
 
-    while (queue.length) {
+    while (path.length) {
       const routes: Position[] = [];
-      const duplicates: number[] = [];
+      const duplicates: (number | null)[] = [];
 
-      queue.forEach(([x, y]) => {
+      path.forEach(([x, y]) => {
         if (input[x][y] == 9) result++;
-        else routes.push(...findNext([x, y]));
+        else routes.push(...findNext([x, y], input));
       });
 
       routes.forEach(([x, y], i) => {
-        [...routes.slice(i + 1)].forEach((pos, index) => {
-          if (pos[0] === x && pos[1] === y) {
-            duplicates.push(i + 1 + index);
-          }
-        });
+        duplicates.push(
+          ...[...routes.slice(i + 1)].map(([a, b], index) =>
+            a === x && b === y ? i + 1 + index : null,
+          ),
+        );
       });
 
-      queue = routes.filter((_, i) => !duplicates.includes(i));
+      path = routes.filter((_, i) => !duplicates.includes(i));
     }
   });
 
   return result;
 };
 
-const part2 = (rawInput: string) => {};
+const part2 = (rawInput: string) => {
+  const input = parseInput(rawInput);
+
+  let result = 0;
+
+  getStartPositions(input).forEach((pos) => {
+    let path = [pos];
+
+    while (path.length) {
+      const routes: Position[] = [];
+
+      path.forEach(([x, y]) => {
+        if (input[x][y] == 9) result++;
+        else routes.push(...findNext([x, y], input));
+      });
+
+      path = routes.filter(Boolean);
+    }
+  });
+
+  return result;
+};
 
 run({
   part1: {
