@@ -20,31 +20,37 @@ const part1 = (rawInput: string) => {
 const part2 = (rawInput: string) => {
   const data = parseInput(rawInput).split(" ");
 
-  let input: { [key: string]: number } = {};
+  let input: Map<number, number> = new Map();
 
-  for (let i = 0; i < data.length; i++) input[data[i]] = 1;
+  for (let i = 0; i < data.length; i++) input.set(+data[i], 1);
 
   for (let i = 0; i < 75; i++) {
-    const newInput: { [k: string]: number } = {};
+    const newInput: Map<number, number> = new Map();
 
-    for (const [value, count] of Object.entries(input)) {
-      if (!+value) {
-        newInput[1] = count;
-      } else if (!(value.length % 2)) {
-        const one = +value.slice(0, value.length / 2) + "";
-        const two = +value.slice(value.length / 2) + "";
+    for (const [value, count] of input) {
+      const str = value.toString();
 
-        newInput[one] = (newInput[one] || 0) + count;
-        newInput[two] = (newInput[two] || 0) + count;
+      if (!value) {
+        newInput.set(1, (newInput.get(1) || 0) + count);
+      } else if (!(str.length % 2)) {
+        const one = str.slice(0, str.length / 2) + "";
+        const two = str.slice(str.length / 2) + "";
+
+        newInput.set(+one, (newInput.get(+one) || 0) + count);
+        newInput.set(+two, (newInput.get(+two) || 0) + count);
       } else {
-        const newValue = +value * 2024 + "";
-        newInput[newValue] = (newInput[newValue] || 0) + count;
+        newInput.set(value * 2024, (newInput.get(value * 2024) || 0) + count);
       }
     }
+
     input = newInput;
   }
 
-  return Object.values(input).reduce((prev, current) => prev + current, 0);
+  let result = 0;
+
+  input.forEach((value) => (result += value));
+
+  return result;
 };
 
 run({
