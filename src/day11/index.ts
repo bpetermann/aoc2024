@@ -5,33 +5,46 @@ const parseInput = (rawInput: string) => rawInput;
 const part1 = (rawInput: string) => {
   let input: string[] = parseInput(rawInput).split(" ");
 
-  const splitInHalf = (value: string): [string, string] => {
-    const value1 = +value.slice(0, value.length / 2);
-    const value2 = +value.slice(value.length / 2);
-
-    return [value1.toString(), value2.toString()];
-  };
-
-  for (let i = 0; i < 25; i++) {
-    input = input.flatMap((value) => {
-      switch (true) {
-        case value === "0":
-          return "1";
-        case +value.length % 2 === 0:
-          return splitInHalf(value);
-        default:
-          return +value * 2024 + "";
-      }
-    });
-  }
+  for (let i = 0; i < 25; i++)
+    input = input.flatMap((v) =>
+      !+v
+        ? "1"
+        : !(v.length % 2)
+        ? [+v.slice(0, v.length / 2) + "", +v.slice(v.length / 2) + ""]
+        : +v * 2024 + "",
+    );
 
   return input.length;
 };
 
 const part2 = (rawInput: string) => {
-  const input = parseInput(rawInput);
+  const data = parseInput(rawInput).split(" ");
 
-  return;
+  let input: { [key: string]: number } = {};
+
+  for (let i = 0; i < data.length; i++) input[data[i]] = 1;
+
+  for (let i = 0; i < 75; i++) {
+    const newInput: { [k: string]: number } = {};
+
+    for (const [value, count] of Object.entries(input)) {
+      if (!+value) {
+        newInput[1] = count;
+      } else if (!(value.length % 2)) {
+        const one = +value.slice(0, value.length / 2) + "";
+        const two = +value.slice(value.length / 2) + "";
+
+        newInput[one] = (newInput[one] || 0) + count;
+        newInput[two] = (newInput[two] || 0) + count;
+      } else {
+        const newValue = +value * 2024 + "";
+        newInput[newValue] = (newInput[newValue] || 0) + count;
+      }
+    }
+    input = newInput;
+  }
+
+  return Object.values(input).reduce((prev, current) => prev + current, 0);
 };
 
 run({
