@@ -8,3 +8,5 @@ node_modules
 .vscode
 .env
 dist
+
+src/day12/index.ts
