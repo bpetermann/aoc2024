@@ -2,46 +2,12 @@ import run from "aocrunner";
 
 const parseInput = (rawInput: string) => rawInput;
 
-type Game = {
-  a: [x: number, y: number];
-  b: [x: number, y: number];
-  prize: [x: number, y: number];
-};
-
 const part1 = (rawInput: string) => {
-  const input = parseInput(rawInput).split("\n");
+  const input = parseInput(rawInput)
+    .split("\n\n")
+    .map((m) => m.match(/\d+/g)?.map(Number)) as number[][];
 
-  const games: Game[] = [];
-
-  for (let i = 0; i < input.length; i++) {
-    if (input[i].startsWith("Button A:")) {
-      const aSplit = input[i].split("+");
-      const aX = +aSplit[1].split(",")[0];
-      const aY = +aSplit[2];
-
-      const bSplit = input[i + 1].split("+");
-      const bX = +bSplit[1].split(",")[0];
-      const bY = +bSplit[2];
-
-      const prizeSplit = input[i + 2].split("=");
-      const prizeX = +prizeSplit[1].split(",")[0];
-      const prizeY = +prizeSplit[2];
-
-      games.push({
-        a: [aX, aY],
-        b: [bX, bY],
-        prize: [prizeX, prizeY],
-      });
-
-      i += 3;
-    }
-  }
-
-  function possibleCombinations(
-    [aX, aY]: [number, number],
-    [bX, bY]: [number, number],
-    [prizeX, prizeY]: [number, number],
-  ) {
+  function possibleCombinations([aX, aY, bX, bY, prizeX, prizeY]: number[]) {
     const possibleSolutions: [number, number][] = [];
 
     outer: for (let i = 0; i <= 100; i++) {
@@ -70,8 +36,8 @@ const part1 = (rawInput: string) => {
 
   let tokens = 0;
 
-  games.forEach(({ a, b, prize }) => {
-    const combinations = possibleCombinations(a, b, prize);
+  input.forEach((game) => {
+    const combinations = possibleCombinations(game);
     tokens += tokenAmount(combinations);
   });
 
@@ -79,9 +45,25 @@ const part1 = (rawInput: string) => {
 };
 
 const part2 = (rawInput: string) => {
-  const input = parseInput(rawInput);
+  const input = parseInput(rawInput)
+    .split("\n\n")
+    .map((value) =>
+      value
+        .match(/\d+/g)
+        ?.map(Number)
+        .map((num, i) => (i > 3 ? 10000000000000 + num : num)),
+    ) as number[][];
 
-  return;
+  let tokens = 0;
+
+  input.forEach(([aX, aY, bX, bY, pX, pY]: number[]) => {
+    const a = (pX * bY - pY * bX) / (aX * bY - aY * bX);
+    const b = (aX * pY - aY * pX) / (aX * bY - aY * bX);
+
+    tokens += Number.isInteger(a) && Number.isInteger(b) ? a * 3 + b : 0;
+  });
+
+  return tokens;
 };
 
 run({
