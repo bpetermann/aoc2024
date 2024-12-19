@@ -211,13 +211,15 @@
           "222646725",
           "95670432"
         ],
-        "time": 249.849768
+        "time": 195.27686
       },
       "part2": {
-        "solved": false,
-        "result": null,
-        "attempts": [],
-        "time": null
+        "solved": true,
+        "result": "8149",
+        "attempts": [
+          "8150"
+        ],
+        "time": 20156.759448
       }
     },
     {
