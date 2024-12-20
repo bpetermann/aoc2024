@@ -230,13 +230,13 @@
           "1525562",
           "1518995"
         ],
-        "time": 160.580787
+        "time": 145.871093
       },
       "part2": {
-        "solved": false,
-        "result": null,
+        "solved": true,
+        "result": "1538862",
         "attempts": [],
-        "time": null
+        "time": 0.010046
       }
     },
     {

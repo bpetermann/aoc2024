@@ -46,8 +46,6 @@ const part1 = (rawInput: string) => {
     if (grid[newX][newY] === ".") {
       grid[newX][newY] = "O";
       return;
-    } else if (grid[newX][newY] === "#") {
-      return;
     } else {
       moveBoxes([newX, newY], [dx, dy]);
     }
